@@ -24,7 +24,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> register(@Valid @RequestBody RegisterRequestDto registerRequestDto) {
+    public ResponseEntity<UserResponseDto> register( @RequestBody RegisterRequestDto registerRequestDto) {
         return ResponseEntity.ok(userService.register(registerRequestDto));
     }
 
