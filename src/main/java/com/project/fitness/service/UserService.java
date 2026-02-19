@@ -14,18 +14,18 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final  UserRepository userRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserResponseDto register(RegisterRequestDto registerRequestDto) {
+    public UserResponseDto register(RegisterRequestDto dto) {
 
-        UserRole role = registerRequestDto.getRole() != null ? registerRequestDto.getRole() : UserRole.USER;
+        UserRole role = dto.getRole() != null ? dto.getRole() : UserRole.USER;
 
         User user = User.builder()
-                .email(registerRequestDto.getEmail())
-                .password(passwordEncoder.encode(registerRequestDto.getPassword()))
-                .firstName(registerRequestDto.getFirstName())
-                .lastName(registerRequestDto.getLastName())
+                .email(dto.getEmail())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
                 .role(role)
                 .build();
 
@@ -34,28 +34,31 @@ public class UserService {
         return mapToDto(savedUser);
     }
 
-    public UserResponseDto mapToDto(User savedUser) {
+    public UserResponseDto mapToDto(User user) {
+
         UserResponseDto response = new UserResponseDto();
-        response.setId(savedUser.getId());
-        response.setEmail(savedUser.getEmail());
-        response.setPassword(savedUser.getPassword());
-        response.setFirstName(savedUser.getFirstName());
-        response.setLastName(savedUser.getLastName());
-        response.setRole(savedUser.getRole());
-        response.setCreatedAt(savedUser.getCreatedAt());
-        response.setUpdatedAt(savedUser.getUpdatedAt());
+
+        response.setId(user.getId());
+        response.setEmail(user.getEmail());
+        response.setFirstName(user.getFirstName());
+        response.setLastName(user.getLastName());
+        response.setRole(user.getRole());
+        response.setCreatedAt(user.getCreatedAt());
+        response.setUpdatedAt(user.getUpdatedAt());
+
         return response;
     }
 
     public User authenticate(LoginRequestDto request) {
-        User user = userRepository.findByEmail(request.getEmail());
 
-        if(user == null)
-            throw new RuntimeException("Invalid Credentials");
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new RuntimeException("Invalid Credentials"));
 
-        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid Credentials");
         }
+
         return user;
     }
 }
