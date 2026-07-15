@@ -15,7 +15,7 @@ import java.util.List;
 public class JwtUtil {
 
     private static final String SECRET =
-            "MySuperSecretKeyForJWTGenerationThatisalwaysLongerThan32CharactersANDsuperStrongIpromise";
+            "MySuperSecretKeyForJWTGenerationThatIsAlwaysLongerThan32CharactersAndSuperStrongIPromise";
 
     private static final long EXPIRATION = 86400000; // 1 day
 
